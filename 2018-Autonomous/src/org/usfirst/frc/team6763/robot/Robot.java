@@ -97,6 +97,7 @@ public class Robot extends IterativeRobot {
 			default:
 				
 				if(gameData.charAt(0) == 'R') {
+					//Right side of switch
 					if(leftEncoder.get() < ticksPerInch * 168) {
 						myRobot.tankDrive(-0.5, -0.5);
 					}
@@ -110,7 +111,44 @@ public class Robot extends IterativeRobot {
 					}
 				}
 				else {
-					
+					//Left side of switch
+					if(leftEncoder.get() < ticksPerInch * 84) {
+						//Drive straight 84"
+						myRobot.tankDrive(-0.5, -0.5);
+					}
+					else {
+						if(rightEncoder.get() < (ticksPerInch * 84) + 4148) {
+							//Turn 90 degrees left
+							myRobot.tankDrive(0.0, -0.5);
+						}
+						else {
+							if(leftEncoder.get() < (ticksPerInch * 84) + (ticksPerInch * 226)) {
+								//Drive straight 226"
+								myRobot.tankDrive(-0.5, -0.5);
+							}
+							else {
+								if(leftEncoder.get() < 37731.33333333332) {
+									//Turn 90 degrees right
+									myRobot.tankDrive(-0.5, 0.0);
+								}
+								else {
+									if(leftEncoder.get() < 48131.33333333332) {
+										//Drive straight 96"
+										myRobot.tankDrive(-0.5, -0.5);
+									}
+									else {
+										if(leftEncoder.get() < 52279.33333333332) {
+											//Turn 90 degrees right
+											myRobot.tankDrive(-0.5, 0.0);
+										}
+										else {
+											myRobot.tankDrive(0.0, 0.0);
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 				
 			break;
