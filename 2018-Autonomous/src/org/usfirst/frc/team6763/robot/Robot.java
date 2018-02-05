@@ -13,10 +13,13 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.CameraServer;
+
+import com.kauailabs.navx.frc.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -40,6 +43,8 @@ public class Robot extends IterativeRobot {
 	Encoder rightEncoder = new Encoder(2, 3);
 	Timer timer = new Timer();
 	
+	AHRS navx = new AHRS(SPI.Port.kMXP);
+	
 	float ticksPerInch = 108.33333333F;
 	String gameData;
 
@@ -57,6 +62,8 @@ public class Robot extends IterativeRobot {
 		rightEncoder.setReverseDirection(true);
 		
 		CameraServer.getInstance().startAutomaticCapture();
+		
+		navx.enableLogging(true);
 	}
 
 	/**
@@ -177,6 +184,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		System.out.println(rightEncoder.get());
+		//System.out.println(rightEncoder.get());
+		System.out.println(navx.getYaw());
 	}
 }
