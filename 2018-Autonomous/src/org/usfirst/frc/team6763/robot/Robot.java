@@ -26,8 +26,8 @@ import edu.wpi.first.wpilibj.CameraServer;
  * project.
  */
 public class Robot extends IterativeRobot {
-	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
+	//private static final String kDefaultAuto = "Default";
+	//private static final String kCustomAuto = "My Auto";
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	
@@ -49,8 +49,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
+		m_chooser.addDefault("Switch", "switch");
+		m_chooser.addObject("Scale", "scale");
 		SmartDashboard.putData("Auto choices", m_chooser);
 		
 		leftEncoder.setReverseDirection(false);
@@ -90,10 +90,19 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		switch (m_autoSelected) {
-			case kCustomAuto:
-				// Put custom auto code here
+			case "scale":
+				
+				if(gameData.charAt(1) == 'R') {
+					//Right side of scale
+					
+				}
+				else {
+					//Left side of scale
+					
+				}
+				
 				break;
-			case kDefaultAuto:
+			case "switch":
 			default:
 				
 				if(gameData.charAt(0) == 'R') {
