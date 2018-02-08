@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.hal.AllianceStationID;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,6 +40,8 @@ public class Robot extends IterativeRobot {
 	Encoder leftEncoder = new Encoder(0, 1);
 	Encoder rightEncoder = new Encoder(2, 3);
 	Timer timer = new Timer();
+	
+	AllianceStationID station;
 	
 	float ticksPerInch = 108.33333333F;
 	String gameData;
@@ -94,7 +97,15 @@ public class Robot extends IterativeRobot {
 				
 				if(gameData.charAt(1) == 'R') {
 					//Right side of scale
-					
+					if(leftEncoder.get() < ticksPerInch * 336) {
+						myRobot.tankDrive(0.5, 0.5);
+					}
+					else if(rightEncoder.get() < 40547.99999999999) {
+						myRobot.tankDrive(0.0, 0.5);
+					}
+					else {
+						myRobot.tankDrive(0.0, 0.0);
+					}
 				}
 				else {
 					//Left side of scale
@@ -103,64 +114,66 @@ public class Robot extends IterativeRobot {
 				
 				break;
 			case "switch":
-			default:
 				
-				if(gameData.charAt(0) == 'R') {
-					//Right side of switch
-					if(leftEncoder.get() < ticksPerInch * 168) {
-						myRobot.tankDrive(-0.5, -0.5);
-					}
-					else {
-						if(rightEncoder.get() < 22795) {
-							myRobot.tankDrive(0.0, -0.5);
+					if(gameData.charAt(0) == 'R') {
+						//Right side of switch
+						if(leftEncoder.get() < ticksPerInch * 168) {
+							myRobot.tankDrive(0.5, 0.5);
 						}
 						else {
-								myRobot.tankDrive(0.0, 0.0);
-						}
-					}
-				}
-				else {
-					//Left side of switch
-					if(leftEncoder.get() < ticksPerInch * 84) {
-						//Drive straight 84"
-						myRobot.tankDrive(-0.5, -0.5);
-					}
-					else {
-						if(rightEncoder.get() < (ticksPerInch * 84) + 4148) {
-							//Turn 90 degrees left
-							myRobot.tankDrive(0.0, -0.5);
-						}
-						else {
-							if(leftEncoder.get() < (ticksPerInch * 84) + (ticksPerInch * 226)) {
-								//Drive straight 226"
-								myRobot.tankDrive(-0.5, -0.5);
+							if(rightEncoder.get() < 22795) {
+								myRobot.tankDrive(0.0, 0.5);
 							}
 							else {
-								if(leftEncoder.get() < 37731.33333333332) {
-									//Turn 90 degrees right
-									myRobot.tankDrive(-0.5, 0.0);
+								myRobot.tankDrive(0.0, 0.0);
+							}
+						}
+					}
+					else {
+						//Left side of switch
+						if(leftEncoder.get() < ticksPerInch * 84) {
+							//Drive straight 84"
+							myRobot.tankDrive(0.5, 0.5);
+						}
+						else {
+							if(rightEncoder.get() < (ticksPerInch * 84) + 4148) {
+								//Turn 90 degrees left
+								myRobot.tankDrive(0.0, 0.5);
+							}
+							else {
+								if(leftEncoder.get() < (ticksPerInch * 84) + (ticksPerInch * 226)) {
+									//Drive straight 226"
+									myRobot.tankDrive(0.5, 0.5);
 								}
 								else {
-									if(leftEncoder.get() < 48131.33333333332) {
-										//Drive straight 96"
-										myRobot.tankDrive(-0.5, -0.5);
+									if(leftEncoder.get() < 37731.33333333332) {
+										//Turn 90 degrees right
+										myRobot.tankDrive(0.5, 0.0);
 									}
 									else {
-										if(leftEncoder.get() < 52279.33333333332) {
-											//Turn 90 degrees right
-											myRobot.tankDrive(-0.5, 0.0);
+										if(leftEncoder.get() < 48131.33333333332) {
+											//Drive straight 96"
+											myRobot.tankDrive(0.5, 0.5);
 										}
 										else {
-											myRobot.tankDrive(0.0, 0.0);
+											if(leftEncoder.get() < 52279.33333333332) {
+												//Turn 90 degrees right
+												myRobot.tankDrive(0.5, 0.0);
+											}
+											else {
+												myRobot.tankDrive(0.0, 0.0);
+											}
 										}
 									}
 								}
 							}
 						}
 					}
-				}
 				
-			break;
+				break;
+			default:
+				
+				break;
 		}
 		System.out.println(rightEncoder.get());
 	}
@@ -170,7 +183,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		myRobot.arcadeDrive(stick.getY(), -stick.getX());
+		myRobot.arcadeDrive(-stick.getY(), stick.getX());
 		
 		if(-stick.getRawAxis(5) < 0) {
 			climber.set(0);
