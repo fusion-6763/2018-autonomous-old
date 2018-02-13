@@ -13,11 +13,14 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.hal.AllianceStationID;
+
+import com.kauailabs.navx.frc.AHRS;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -41,9 +44,9 @@ public class Robot extends IterativeRobot {
 	Encoder rightEncoder = new Encoder(2, 3);
 	Timer timer = new Timer();
 	
-	AllianceStationID station;
+	AHRS navx = new AHRS(SerialPort.Port.kUSB);
 	
-	float ticksPerInch = 108.33333333F;
+	float ticksPerInch = 106;
 	String gameData;
 
 	/**
@@ -84,6 +87,8 @@ public class Robot extends IterativeRobot {
 		leftEncoder.reset();
 		rightEncoder.reset();
 		
+		navx.reset();
+		
 		gameData = DriverStation.getInstance().getGameSpecificMessage();
 	}
 
@@ -95,80 +100,102 @@ public class Robot extends IterativeRobot {
 		switch (m_autoSelected) {
 			case "scale":
 				
+				//Go for scale
 				if(gameData.charAt(1) == 'R') {
 					//Right side of scale
 					if(leftEncoder.get() < ticksPerInch * 336) {
+						//Drive straight 336"
 						myRobot.tankDrive(0.5, 0.5);
 					}
-					else if(rightEncoder.get() < 40547.99999999999) {
+					else if(navx.getYaw() > -87) {
+						//Turn left 90 degrees
 						myRobot.tankDrive(0.0, 0.5);
 					}
 					else {
+						//Stop
 						myRobot.tankDrive(0.0, 0.0);
 					}
 				}
 				else {
 					//Left side of scale
-					
+					if(leftEncoder.get() < ticksPerInch * 224) {
+						//Drive straight 224"
+						myRobot.tankDrive(0.5, 0.5);
+					}
+					else if(rightEncoder.get() < 28414.66666666666) {
+						//Turn left 90 degrees
+						myRobot.tankDrive(0.0, 0.5);
+					}
+					else if(leftEncoder.get() < 48533.33333333332) {
+						//Drive straight 224"
+						myRobot.tankDrive(0.5, 0.5);
+					}
+					else if(leftEncoder.get() < ((ticksPerInch * 224) * 2) + 4148) {
+						//Turn right 90 degrees
+						myRobot.tankDrive(0.5, 0.0);
+					}
+					else if(leftEncoder.get() < (((ticksPerInch * 224) * 2) + 4148) + (ticksPerInch * 84)) {
+						//Drive straight 84"
+						myRobot.arcadeDrive(0.5, 0.5);
+					}
+					else if(leftEncoder.get() < (((ticksPerInch * 224) * 2) + 4148) + (ticksPerInch * 84) + 4148) {
+						myRobot.tankDrive(0.5, 0.0);
+					}
+					else {
+						//Stop
+						myRobot.tankDrive(0.0, 0.0);
+					}
 				}
 				
 				break;
 			case "switch":
-				
-					if(gameData.charAt(0) == 'R') {
-						//Right side of switch
-						if(leftEncoder.get() < ticksPerInch * 168) {
-							myRobot.tankDrive(0.5, 0.5);
-						}
-						else {
-							if(rightEncoder.get() < 22795) {
-								myRobot.tankDrive(0.0, 0.5);
-							}
-							else {
-								myRobot.tankDrive(0.0, 0.0);
-							}
-						}
+					
+				//Go for switch
+				if(gameData.charAt(0) == 'R') {
+					//Right side of switch
+					if(leftEncoder.get() < ticksPerInch * 168) {
+						//Drive straight 168"
+						myRobot.tankDrive(0.5, 0.5);
+					}
+					else if(navx.getYaw() > -87) {
+						//Turn left 90 degrees
+						myRobot.tankDrive(0.0, 0.5);
 					}
 					else {
-						//Left side of switch
-						if(leftEncoder.get() < ticksPerInch * 84) {
-							//Drive straight 84"
-							myRobot.tankDrive(0.5, 0.5);
-						}
-						else {
-							if(rightEncoder.get() < (ticksPerInch * 84) + 4148) {
-								//Turn 90 degrees left
-								myRobot.tankDrive(0.0, 0.5);
-							}
-							else {
-								if(leftEncoder.get() < (ticksPerInch * 84) + (ticksPerInch * 226)) {
-									//Drive straight 226"
-									myRobot.tankDrive(0.5, 0.5);
-								}
-								else {
-									if(leftEncoder.get() < 37731.33333333332) {
-										//Turn 90 degrees right
-										myRobot.tankDrive(0.5, 0.0);
-									}
-									else {
-										if(leftEncoder.get() < 48131.33333333332) {
-											//Drive straight 96"
-											myRobot.tankDrive(0.5, 0.5);
-										}
-										else {
-											if(leftEncoder.get() < 52279.33333333332) {
-												//Turn 90 degrees right
-												myRobot.tankDrive(0.5, 0.0);
-											}
-											else {
-												myRobot.tankDrive(0.0, 0.0);
-											}
-										}
-									}
-								}
-							}
-						}
+						//Stop
+						myRobot.tankDrive(0.0, 0.0);
 					}
+				}
+				else {
+					//Left side of switch
+					if(leftEncoder.get() < ticksPerInch * 84) {
+						//Drive straight 84"
+						myRobot.tankDrive(0.5, 0.5);
+					}
+					else if(rightEncoder.get() < (ticksPerInch * 84) + 4148) {
+						//Turn 90 degrees left
+						myRobot.tankDrive(0.0, 0.5);
+					}
+					else if(leftEncoder.get() < (ticksPerInch * 84) + (ticksPerInch * 226)) {
+						//Drive straight 226"
+						myRobot.tankDrive(0.5, 0.5);
+					}
+					else if(leftEncoder.get() < 37731.33333333332) {
+						//Turn 90 degrees right
+						myRobot.tankDrive(0.5, 0.0);
+					}
+					else if(leftEncoder.get() < 48131.33333333332) {
+						//Drive straight 96"
+						myRobot.tankDrive(0.5, 0.5);
+					}
+					else if(leftEncoder.get() < 52279.33333333332) {
+						//Turn 90 degrees right
+						myRobot.tankDrive(0.5, 0.0);
+					}
+					else {
+						myRobot.tankDrive(0.0, 0.0);
+					}
+				}
 				
 				break;
 			default:
@@ -185,12 +212,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		myRobot.arcadeDrive(-stick.getY(), stick.getX());
 		
-		if(-stick.getRawAxis(5) < 0) {
-			climber.set(0);
-		}
-		else {
-			climber.set(stick.getRawAxis(5));
-		}
+		climber.set(-stick.getRawAxis(3));
 		System.out.println(rightEncoder.get());
 	}
 
@@ -200,5 +222,17 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		System.out.println(rightEncoder.get());
+	}
+	
+	public void accurateDrive(AHRS ahrs, float speed, float targetAngle) {
+		if(ahrs.getYaw() < targetAngle - 3) {
+			myRobot.tankDrive(speed, speed / 2);
+		}
+		else if(ahrs.getYaw() > targetAngle + 3) {
+			myRobot.tankDrive(speed / 2, speed);
+		}
+		else {
+			myRobot.tankDrive(speed, speed);
+		}
 	}
 }
